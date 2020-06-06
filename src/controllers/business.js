@@ -1,5 +1,6 @@
 const Address = require('../models/address')
 const Business = require('../models/business')
+const Category = require('../models/category')
 const { getMongooseErrors } = require('../helpers/errors')
 
 module.exports = {
@@ -7,6 +8,9 @@ module.exports = {
     try {
       const { name, description, email, phone, address = {}, category } = req.body
       const { street, number, neighborhood, observations, city_id, city, uf_id, uf, latitude, longitude } = address
+
+      const newCategory = await Category.findOne({ _id: category })
+      if (!newCategory) throw new Error('Categoria inválida')
 
       const addressData = {
         street,
@@ -34,8 +38,8 @@ module.exports = {
       const business = new Business(businessData)
       await business.validate()
 
-      await business.save()
-      await newAddress.save()
+      // await business.save()
+      // await newAddress.save()
       return res.status(200).json(business)
     } catch (error) {
       return res.status(400).json({
