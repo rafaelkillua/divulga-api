@@ -61,6 +61,36 @@ module.exports = {
       return res.status(200).json(business)
     } catch (error) {
       return res.status(400).json({
+        error: 'BUSINESS_FINDALL',
+        message: 'Houve um erro ao listar empresas',
+        originalMessage: error.message,
+        fields: getMongooseErrors(error)
+      })
+    }
+  },
+
+  delete: async (req, res) => {
+    try {
+      const { id } = req.params
+      
+      const business = await Business.findOne({ _id: id }).populate('address')
+
+      if (business) {
+        business.address.remove()
+        business.remove()
+      } else throw new Error('BUSINESS_NOT_FOUND')
+      
+      return res.status(200).json({ message: 'Empresa excluída com sucesso' })
+    } catch (error) {
+      if (error.message === 'BUSINESS_NOT_FOUND') {
+        return res.status(404).json({
+          error: 'Empresa não encontrada',
+          message: 'Houve um erro ao excluir essa empresa',
+          originalMessage: error.message,
+          fields: getMongooseErrors(error)
+        })
+      }
+      return res.status(400).json({
         error: 'CATEGORY_FINDALL',
         message: 'Houve um erro ao listar categorias',
         originalMessage: error.message,
