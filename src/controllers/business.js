@@ -53,8 +53,8 @@ module.exports = {
       const where = {}
 
       if (category) where.category = category
-      if (uf_id) where.uf_id = uf_id
-      if (city_id) where.city_id = city_id
+      // if (uf_id) where.uf_id = uf_id
+      // if (city_id) where.city_id = city_id
       if (name) {
         where.$text = {
           $search: name
@@ -85,12 +85,12 @@ module.exports = {
       const total = await Business.estimatedDocumentCount()
 
       return res.status(200).json({
-        list,
         pagination: {
           total,
           perPage: +perPage,
           page: (+page || 1)
-        }
+        },
+        list
       })
     } catch (error) {
       return res.status(400).json({
