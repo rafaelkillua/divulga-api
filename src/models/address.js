@@ -41,6 +41,9 @@ const schema = new mongoose.Schema(
     longitude: {
       type: String
     }
+  },
+  {
+    timestamps: true
   }
 )
 

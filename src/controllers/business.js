@@ -33,7 +33,7 @@ module.exports = {
       }
       const business = new Business(businessData)
       await business.validate()
-      
+
       await business.save()
       await newAddress.save()
       return res.status(200).json(business)
@@ -49,15 +49,35 @@ module.exports = {
 
   findAll: async (req, res) => {
     try {
-      const { name } = req.query
+      const { name, category, uf_id, city_id } = req.query
       const where = {}
-      if (name) where.name = new RegExp(name, 'i')
-      
-      const business = await Business.find(where, null, {
-        sort: 'name',
-        populate: ['address', 'category']
-      })
-      
+
+      if (category) where.category = category
+      if (uf_id) where.uf_id = uf_id
+      if (city_id) where.city_id = city_id
+      if (name) {
+        where.$text = {
+          $search: name
+        }
+      }
+
+      const business = await Business.find(
+        where,
+        {
+          score: {
+            $meta: "textScore"
+          }
+        },
+        {
+          sort: {
+            score: {
+              $meta: "textScore"
+            },
+            name: 1
+          },
+          populate: ['address', 'category']
+        })
+
       return res.status(200).json(business)
     } catch (error) {
       return res.status(400).json({
@@ -72,14 +92,14 @@ module.exports = {
   delete: async (req, res) => {
     try {
       const { id } = req.params
-      
+
       const business = await Business.findOne({ _id: id }).populate('address')
 
       if (business) {
         business.address.remove()
         business.remove()
       } else throw new Error('BUSINESS_NOT_FOUND')
-      
+
       return res.status(200).json({ message: 'Empresa excluída com sucesso' })
     } catch (error) {
       if (error.message === 'BUSINESS_NOT_FOUND') {

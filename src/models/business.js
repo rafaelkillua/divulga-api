@@ -7,10 +7,13 @@ const schema = new mongoose.Schema(
       type: String,
       required: [true, 'Nome é obrigatório'],
       minlength: [4, 'Nome deve ter no mínimo 4 caracteres'],
-      unique: [true, 'Já existe uma empresa com esse nome']
+      maxlength: [50, 'Nome deve ter no máximo 50 caracteres']
     },
     description: {
-      type: String
+      type: String,
+      required: [true, 'Descrição é obrigatória'],
+      minlength: [10, 'Descrição deve ter no mínimo 10 caracteres'],
+      maxlength: [100, 'Descrição deve ter no máximo 100 caracteres']
     },
     email: {
       type: String,
@@ -30,7 +33,15 @@ const schema = new mongoose.Schema(
       ref: 'Category',
       required: [true, 'Categoria é obrigatória'],
     },
+  },
+  {
+    timestamps: true
   }
 )
+
+schema.index({
+  name: 'text',
+  description: 'text'
+})
 
 module.exports = db.model('Business', schema)
