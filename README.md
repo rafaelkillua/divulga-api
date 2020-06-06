@@ -1,1 +1,1 @@
-# divulgador-api
+# divulga-api
