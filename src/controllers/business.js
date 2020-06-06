@@ -47,9 +47,9 @@ module.exports = {
     }
   },
 
-  findAll: async (req, res) => {
+  find: async (req, res) => {
     try {
-      const { name, category, uf_id, city_id } = req.query
+      const { name, category, uf_id, city_id, page = 1, perPage = 12 } = req.query
       const where = {}
 
       if (category) where.category = category
@@ -61,7 +61,7 @@ module.exports = {
         }
       }
 
-      const business = await Business.find(
+      const list = await Business.find(
         where,
         {
           score: {
@@ -75,10 +75,23 @@ module.exports = {
             },
             name: 1
           },
-          populate: ['address', 'category']
-        })
+          populate: ['address', 'category'],
+          page: +page,
+          limit: +perPage,
+          skip: ((+page || 1) - 1) * +perPage
+        }
+      )
 
-      return res.status(200).json(business)
+      const total = await Business.estimatedDocumentCount()
+
+      return res.status(200).json({
+        list,
+        pagination: {
+          total,
+          perPage: +perPage,
+          page: (+page || 1)
+        }
+      })
     } catch (error) {
       return res.status(400).json({
         error: 'BUSINESS_FINDALL',

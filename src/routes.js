@@ -8,7 +8,7 @@ module.exports = app => {
   // BUSINESS
   app.post(`/business`, businessController.create),
   
-  app.get(`/business`, businessController.findAll),
+  app.get(`/business`, businessController.find),
 
   app.delete(`/business/:id`, businessController.delete),
 
