@@ -3,11 +3,10 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
 require('dotenv').config()
+const db = require('./database/mongoose')
 const port = process.env.PORT || 80
 
-const operatorsRouter = require('./routes/ws-operators')
-const brandsRouter = require('./routes/ws-brands')
-const banksRouter = require('./routes/ws-banks')
+const router = require('./routes')
 
 const app = express()
 
@@ -17,20 +16,12 @@ app.use(logger('dev'))
 app.use(cors())
 app.use(cookieParser())
 
-operatorsRouter(app)
-brandsRouter(app)
-banksRouter(app)
+router(app)
 
-app.use('/docs', express.static('doc'))
-
-try {
-  if (process.env.NODE_ENV !== 'test') {
-    app.listen(port, () => {
-      console.log(`Online on port ${port}`)
-    })
-  }
-} catch (error) {
-  console.error(error)
-}
+app.listen(port, () => {
+  console.log(`Online on port ${port}`)
+  db.on('error', console.error.bind(console, 'connection error:'))
+  db.once('open', () => console.log('DB connected'))
+})
 
 module.exports = app

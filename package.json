@@ -1,15 +1,12 @@
 {
-  "name": "ws-operators",
-  "version": "0.0.0",
+  "name": "divulgador-api",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "apidoc -i src/routes/ && node ./src/app.js",
-    "dev": "nodemon ./src/app.js",
-    "doc": "apidoc -i src/routes/",
-    "test": "jest"
+    "dev": "nodemon ./src/app.js"
   },
   "dependencies": {
-    "apidoc": "^0.22.1",
     "axios": "^0.19.2",
     "cookie-parser": "~1.4.5",
     "cors": "^2.8.5",
@@ -17,25 +14,10 @@
     "debug": "~4.1.1",
     "dotenv": "^8.2.0",
     "express": "~4.17.1",
-    "morgan": "~1.10.0",
-    "mysql": "^2.18.1"
+    "mongoose": "^5.9.18",
+    "morgan": "~1.10.0"
   },
   "devDependencies": {
-    "jest": "^26.0.1",
-    "nodemon": "^2.0.4",
-    "supertest": "^4.0.2"
-  },
-  "apidoc": {
-    "name": "WS-Operators",
-    "version": "0.0.1",
-    "title": "WS Operator",
-    "description": "A API do operador intermediará a comunicação entre o vendedor e a bandeira do cartão de crédito.",
-    "url": "https://pdsiii-operators.herokuapp.com"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ]
+    "nodemon": "^2.0.4"
   }
 }
