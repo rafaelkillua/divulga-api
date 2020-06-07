@@ -1,7 +1,7 @@
 const Address = require('../models/address')
 const Business = require('../models/business')
 const Category = require('../models/category')
-const { upload } = require('../services/cloudinary')
+const { upload, destroy } = require('../services/cloudinary')
 const { getMongooseErrors } = require('../helpers/errors')
 
 module.exports = {
@@ -119,6 +119,7 @@ module.exports = {
       if (business) {
         business.address.remove()
         business.remove()
+        if (business.logo) await destroy(business.logo.public_id)
       } else throw new Error('BUSINESS_NOT_FOUND')
 
       return res.status(200).json({ message: 'Empresa excluída com sucesso' })
