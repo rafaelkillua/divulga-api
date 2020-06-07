@@ -38,8 +38,8 @@ module.exports = {
       const business = new Business(businessData)
       await business.validate()
 
-      // await business.save()
-      // await newAddress.save()
+      await business.save()
+      await newAddress.save()
       return res.status(200).json(business)
     } catch (error) {
       return res.status(400).json({
@@ -53,7 +53,10 @@ module.exports = {
 
   find: async (req, res) => {
     try {
-      const { name, category, uf_id, city_id, page = 1, perPage = 12 } = req.query
+      const { name, category, uf_id, city_id } = req.query
+      let { page = 1, perPage = 12 } = req.query
+      page = Math.abs(page)
+      perPage = Math.abs(perPage)
       const where = {}
 
       if (category) where.category = category
@@ -80,19 +83,19 @@ module.exports = {
             name: 1
           },
           populate: ['address', 'category'],
-          page: +page,
-          limit: +perPage,
-          skip: ((+page || 1) - 1) * +perPage
+          page: page,
+          limit: perPage,
+          skip: ((page || 1) - 1) * perPage
         }
       )
 
-      const total = await Business.estimatedDocumentCount()
+      const total = await Business.countDocuments(where)
 
       return res.status(200).json({
         pagination: {
           total,
-          perPage: +perPage,
-          page: (+page || 1)
+          perPage: perPage,
+          page: (page || 1)
         },
         list
       })
