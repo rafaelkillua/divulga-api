@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const db = require('../database/mongoose')
+const db = require('../services/mongoose')
 
 const schema = new mongoose.Schema(
   {
@@ -33,6 +33,9 @@ const schema = new mongoose.Schema(
       ref: 'Category',
       required: [true, 'Categoria é obrigatória'],
     },
+    logo: {
+      type: Object
+    }
   },
   {
     timestamps: true

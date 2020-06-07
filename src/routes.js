@@ -1,3 +1,5 @@
+const multer = require('multer')
+const upload = multer()
 const businessController = require('./controllers/business')
 const categoryController = require('./controllers/category')
 
@@ -7,6 +9,8 @@ module.exports = app => {
 
   // BUSINESS
   app.post(`/business`, businessController.create),
+
+  app.post(`/business-logo`, upload.single('logo'), businessController.uploadLogo),
   
   app.get(`/business`, businessController.find),
 

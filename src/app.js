@@ -3,7 +3,7 @@ const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const cors = require('cors')
 require('dotenv').config()
-const db = require('./database/mongoose')
+const db = require('./services/mongoose')
 const port = process.env.PORT || 80
 
 const router = require('./routes')

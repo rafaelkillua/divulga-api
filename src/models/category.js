@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const db = require('../database/mongoose')
+const db = require('../services/mongoose')
 
 const schema = new mongoose.Schema(
   {

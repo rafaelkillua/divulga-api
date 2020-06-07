@@ -1,6 +1,7 @@
 const Address = require('../models/address')
 const Business = require('../models/business')
 const Category = require('../models/category')
+const { upload } = require('../services/cloudinary')
 const { getMongooseErrors } = require('../helpers/errors')
 
 module.exports = {
@@ -8,8 +9,8 @@ module.exports = {
     try {
       const { name, description, email, phone, address = {}, category } = req.body
       const { street, number, neighborhood, observations, city_id, city, uf_id, uf, latitude, longitude } = address
-
-      const newCategory = await Category.findOne({ _id: category })
+      
+      const newCategory = await Category.findById(category)
       if (!newCategory) throw new Error('Categoria inválida')
 
       const addressData = {
@@ -126,16 +127,33 @@ module.exports = {
         return res.status(404).json({
           error: 'Empresa não encontrada',
           message: 'Houve um erro ao excluir essa empresa',
-          originalMessage: error.message,
-          fields: getMongooseErrors(error)
+          originalMessage: error.message
         })
       }
       return res.status(400).json({
-        error: 'CATEGORY_FINDALL',
-        message: 'Houve um erro ao listar categorias',
-        originalMessage: error.message,
-        fields: getMongooseErrors(error)
+        error: 'BUSINESS_DELETE',
+        message: 'Houve um erro ao excluir a empresa',
+        originalMessage: error.message
       })
     }
   },
+
+  uploadLogo: async (req, res) => {
+    try {
+      const { businessId } = req.body
+      if (!req.file) throw new Error('Arquivo não enviado')
+      if (!businessId) throw new Error('ID da empresa não enviado')
+      const imageData = await upload(req.file)
+      const business = await Business.findById(businessId)
+      business.set('logo', imageData)
+      business.save()
+      return res.status(200).json(imageData)
+    } catch (error) {
+      return res.status(400).json({
+        error: 'BUSINESS_LOGO',
+        message: 'Houve um erro ao fazer upload da logo',
+        originalMessage: error.message
+      })
+    }
+  }
 }
